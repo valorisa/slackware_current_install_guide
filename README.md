@@ -149,7 +149,7 @@ Utilisez un outil graphique :
 ## Maintenance de Slackware Current
 
 * **Mises à jour :** "Current" change souvent. Mettez à jour régulièrement.
-    1. Configurez `slackpkg` : éditez `/etc/slackpkg/mirrors` et décommentez **un seul** miroir "current" proche de vous (ex: Montpellier -> un miroir français).
+    1. Configurez `slackpkg` : éditez `/etc/slackpkg/mirrors` et décommentez **un seul** miroir "current" proche de vous (ex: Saint-Malo -> un miroir français).
     2. Exécutez (en tant que `root` ou via `sudo`) :
 
         ```bash

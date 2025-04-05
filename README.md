@@ -148,18 +148,75 @@ Utilisez un outil graphique :
 
 ## Maintenance de Slackware Current
 
-* **Mises à jour :** "Current" change souvent. Mettez à jour régulièrement.
-    1. Configurez `slackpkg` : éditez `/etc/slackpkg/mirrors` et décommentez **un seul** miroir "current" proche de vous (ex: Paris -> un miroir français).
-    2. Exécutez (en tant que `root` ou via `sudo`) :
+* **Nature de "Current" :** Rappel : "Current" est une branche de test. Attendez-vous à des changements fréquents et potentiellement des instabilités. N'utilisez cette branche que si vous êtes prêt à potentiellement dépanner votre système.
+* **Mises à jour :** Il est crucial de mettre à jour régulièrement pour bénéficier des derniers correctifs et fonctionnalités, mais aussi pour éviter un trop grand écart avec la branche qui pourrait rendre les mises à jour futures difficiles. La procédure standard utilise l'outil `slackpkg`.
+
+    1. **Configurer le Miroir (`/etc/slackpkg/mirrors`) :** C'est la **première étape indispensable** avant de pouvoir utiliser `slackpkg`. Vous devez lui indiquer où télécharger les informations et les paquets.
+        * Ouvrez le fichier de configuration des miroirs avec un éditeur de texte en tant que `root` :
+
+            ```bash
+            sudo nano /etc/slackpkg/mirrors
+            # ou utilisez ee, vi, emacs...
+            ```
+
+        * Ce fichier contient une longue liste de miroirs du monde entier, tous commentés par défaut (lignes commençant par `#`).
+        * **Règle d'or :** Vous devez décommenter (supprimer le `#` au début) **une seule ligne** dans tout le fichier. Cette unique ligne active indiquera à `slackpkg` quel serveur utiliser.
+        * **Choix du miroir :** Pour de meilleures performances depuis votre localisation (Montpellier), il est fortement recommandé de choisir un miroir physiquement proche (en France ou Europe de l'Ouest) qui héberge la branche que vous utilisez (`slackware64-current` dans ce cas). Le protocole HTTPS est généralement préférable à HTTP ou FTP.
+        * **Exemple (choisir le miroir IRCAM en France) :** Faites défiler le fichier jusqu'à trouver la section des miroirs français. Repérez un miroir comme celui de l'IRCAM et décommentez sa ligne :
+
+            ```text
+            # ... (beaucoup d'autres miroirs commentés avant et après) ...
+
+            # ==========================================================================
+            # = Miroirs situés en France                                                =
+            # ==========================================================================
+
+            # Institut de Recherche et Coordination Acoustique/Musique (IRCAM), Paris (HTTPS)
+            # Rapide, fiable et en France. Un excellent choix depuis Montpellier.
+            # Pour l'utiliser, supprimez le '#' au début de la ligne suivante :
+            # (LIGNE ORIGINALEMENT COMMENTÉE) :
+            # [https://mirrors.ircam.fr/pub/slackware/slackware64-current/](https://mirrors.ircam.fr/pub/slackware/slackware64-current/)
+            # (LIGNE À DÉCOMMENTER - SANS LE # DEVANT) :
+            [https://mirrors.ircam.fr/pub/slackware/slackware64-current/](https://mirrors.ircam.fr/pub/slackware/slackware64-current/)
+
+            # ... (assurez-vous que TOUTES les autres lignes de miroirs restent commentées !) ...
+            ```
+
+        * Sauvegardez les modifications (ex: `Ctrl+O` avec nano) et quittez l'éditeur (ex: `Ctrl+X` avec nano).
+
+    2. **Tester le miroir et mettre à jour les listes de paquets :** Une fois le miroir configuré, lancez (en `root` ou avec `sudo`):
 
         ```bash
-        slackpkg update
-        slackpkg install-new
-        slackpkg upgrade-all
-        slackpkg clean-system
+        sudo slackpkg update
         ```
 
-* **LISEZ LE ChangeLog.txt !** Avant chaque `slackpkg upgrade-all`, lisez impérativement le fichier `/var/log/packages/ChangeLog.txt` (ou celui sur le miroir). Il détaille les changements récents et indique s'il y a des étapes manuelles ou des précautions particulières à prendre. C'est **vital** pour la maintenance de "current".
+        Cette commande contacte le miroir choisi, télécharge les fichiers de métadonnées (CHECKSUMS.md5, MANIFEST.bz2, etc.) et vérifie les signatures GPG. Si elle se termine sans erreur, votre miroir est fonctionnel.
+
+    3. **Installer les nouveaux paquets ajoutés à "Current" :**
+
+        ```bash
+        sudo slackpkg install-new
+        ```
+
+        Ceci installe les paquets qui ont été ajoutés à la distribution depuis votre dernière mise à jour.
+
+    4. **Mettre à niveau les paquets installés vers leur dernière version :**
+
+        ```bash
+        sudo slackpkg upgrade-all
+        ```
+
+        Ceci met à jour tous les paquets installés sur votre système vers la version disponible sur le miroir.
+
+    5. **Nettoyer les paquets obsolètes (optionnel mais recommandé) :**
+
+        ```bash
+        sudo slackpkg clean-system
+        ```
+
+        Ceci liste les paquets installés sur votre système qui ne font plus partie de la distribution "current" (ils ont été retirés ou remplacés). Vous pouvez choisir de les désinstaller pour garder un système propre.
+
+* **LISEZ LE ChangeLog.txt !** C'est peut-être l'étape la plus importante pour un utilisateur de "current". **Avant** chaque `slackpkg upgrade-all`, consultez attentivement le fichier `/var/log/packages/ChangeLog.txt` (qui est mis à jour par `slackpkg update`). Il détaille tous les changements récents (paquets ajoutés, supprimés, mis à jour) et contient souvent des notes importantes de l'équipe Slackware sur d'éventuelles actions manuelles requises ou des changements majeurs. Ignorer le ChangeLog est le moyen le plus sûr de rencontrer des problèmes avec "current". Vous pouvez aussi le consulter en ligne sur le miroir que vous utilisez.
 
 ---
 
